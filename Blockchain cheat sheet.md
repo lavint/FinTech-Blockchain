@@ -323,7 +323,7 @@ Here are some popular ones:
 
 * Download a stable `Geth & Tools` Release on this [site](https://geth.ethereum.org/downloads/) and save on local drive
 
-* On Gitbase, `cd` to the folder location. Then type/pick the followings
+* On Gitbash, `cd` to the folder location. Then type the followings to create a Genesis Block
 
 ```
 #1
@@ -351,4 +351,115 @@ Here are some popular ones:
 # Enter a number that you can remember
 ```
 
+<br>
 
+Then type the followings to create 2 nodes
+
+```
+#1
+./puppeth
+
+#2
+# Enter 2 to Manage existing genesis
+
+#3
+# Enter 2 to Export genesis configurations
+
+#4
+# Press Enter to continue with the current directory
+# This will export several .json files
+
+#5
+# Exit puppeth prompt by using Ctrl+C
+
+#6
+# Make sure you are in the Blockchain_Tools directory
+# Create the first node's data directory
+./geth account new --datadir node1
+
+#7
+# Copy the keys and addresses
+
+#8
+# Enter a password
+
+#9
+# Create the second node's data directory
+# You typically would only have one node per machine
+# but you need to create at least two nodes in your computer
+# to create a blockchain
+
+./geth account new --datadir node2
+
+
+#10
+# Initialize and tell the nodes to use the genesis block
+./geth init puppernet.json --datadir node1
+./geth init puppernet.json --datadir node2
+
+```
+
+<br>
+
+
+Then type the followings to start the Blockchain
+
+```
+#1
+# cd to the Blockchain_Tools dir
+
+#2
+# Launch the first node into mining mode
+# In the event that your enode address ends in an IP address
+# that is not the localhost (127.0.0.1), you may add the
+# --rpcaddr 127.0.0.1 flag in order to force it to do so
+
+# The --mine flag tells the node to mine new blocks
+# The --minerthreads flag tells geth how many CPU threads
+# or "workers" to use during mining
+# 1 means the difficulty is low
+
+
+./geth --datadir node1 --mine --minerthreads 1
+
+
+
+#3
+# Scroll up in the terminal window and copy the entire enode:// address
+# We will need this address to tell the second node where to find the first node
+
+
+#4
+# Open another Gitbash and navigate to the same directory
+
+#5
+# Launch the second node
+# Enable RPC
+# Change the default port
+# Pass the enodeid of the first node you copied in quotes
+# --rpc flag enables us to talk to our node, allowing us to use MyCrypto to transact on our chain
+# --port flag enables us to change the port to 30304 which is different from the first node
+# --bootnodes flag allows us to pass the network info to connect to other nodes in the blockchain
+
+
+# OS
+
+./geth --datadir node2 --port 30304 --rpc --bootnodes "enode://CopyFromFirstNode"
+
+
+# Windows
+
+./geth --datadir node2 --port 30304 --rpc --bootnodes "enode://CopyFromFirstNode" --ipcdisable
+
+```
+
+<br>
+
+
+**If you need to start over without destroying the accounts, run the following command to clear the chain data**
+
+```
+rm -Rf node1/geth node2/geth
+```
+
+* The enodeid is the only aspect that will change
