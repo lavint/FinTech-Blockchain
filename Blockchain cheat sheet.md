@@ -505,6 +505,8 @@ Another way to start the Blockchain network with `unlock` flag
 
 # Making Transactions via Python Web3
 
+* `Web3` is a library that gives us the ability to talk to Ethereum nodes in Python
+
 ```
 import os
 from web3 import Web3
@@ -590,4 +592,110 @@ Web3.toChecksumAddress("0xb42562bC046f18f31ECF0a0126557bef3676d7E8")
 
 <br>
 <br>
+
+# Blockchain Architecture
+
+*Ethereum vs Bitcoin*
+
+|Ethereum                                                |Bitcoin        |
+|-----                                                   |-----          |
+|designed for general computing                          |designed for complex payments on the natively core layer of the blockchain|
+|needs complex and expensive smart contracts to do transaction  |supports multisig natively|
+|requires more computational effort                      |requires less computational effort thus cheaper|
+|computing focus                                         | payment focus|
+|                                                        |supports multiple inputs and outputs in transactions|
+|uses nonces to count transactions sent from an account  ||
+|uses a single account system                            |uses a UTXO system  |
+
+
+
+<br>
+<br>
+
+## Bitcoin infrastructure
+
+* Able to send Bitcoins to multiple addresses in one transaction 
+* Unlike Ethereum in which we have to write a smart contract (expensive) for transactions
+
+
+
+* `bit` is a library that gives us the ability to connect to Bitcoin networks and manage keys in Python
+
+* `WIF` stands for wallet import format which is a special format Bitcoin uses to designate the types of keys it generates.
+
+
+```
+from bit import wif_to_key
+
+# Create a WIF object
+key = wif_to_key("YOUR_TESTNET_BITCOIN_PRIVATE_KEY")
+
+
+# Get balance
+key.get_balance("btc")
+
+
+# Get balance in USD equivalent
+# Check out the documentation for supported currency conversion
+key.balance_as("usd")
+
+
+# Create a list of Bitcoin addresses to send BTC to 
+addresses = ["TESTNET_BITCOIN_ADDRESS_1", "TESTNET_BITCOIN_ADDRESS_2"]
+
+# Create an empty list
+outputs = []
+
+# Append a tuple with 3 specific items to a list
+for address in addresses:
+    outputs.append((address, 0.0001, "btc"))
+
+# Send BTC and print transaction ID
+print(key.send(outputs))
+
+
+# Get the wallet's all transaction history
+key.get_transactions()
+
+# Check the wallet's unspent BTC
+key.get_unspents()
+
+# The confirmations field indicates how many blocks ago the UTXO arrived in this wallet
+```
+
+<br>
+
+## Unspent Transaction Outputs (UTXOs)
+
+* The mechanism that allows us to send to multiple addresses 
+
+* UTXOs are the digital equivalent of "change" in a transaction
+    * You pay $5 for a $3 worth product, you get $2 back
+    * Bitcoin treats balances as sets of change that are owned by different private keys. 
+    * To calculate your wallet's balance, you simply sum up all of the UTXOs that your private keys own
+
+* New UTXOs are created when a transation is sent
+
+* It allows you to do more complex accounting
+
+* It treats the bitcoins as individuals and not a simple balance
+
+* You can send to multiple addresses and have multiple outputs in 1 transaction
+
+* You can also have multiple inputs, meaning you can spend from multiple addresses and multiple wallets at the same time
+
+* Before you can do multi-input/output transactions, you have to sign your UTXOs with their designated private keys
+
+* It is more poweful than Ethereum's accounting model because you can spend from multiple keys in one transaction, and construct much more complex transactions natively without smart contracts
+
+
+* As long as you are spending different UTXOs in each transaction, you can send multiple transactions at the same time.
+
+* It is impossible to spend from the same UTXOx in the same block
+
+* If you were to spend the same UTXOs in both transactions, the first one to be mined would succeed, and the second would be invalidated.
+
+<br>
+
+
 
