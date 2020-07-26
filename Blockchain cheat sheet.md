@@ -92,7 +92,7 @@ A blockchain is a distributed "immutable" database that is not controlled by a s
 <br>
 
 
-* `Digital Signature`: Use cryptography to prove things stay the same
+* `Digital Signature`: A cryptographic technique used to ensure the integrity and authority of data
 
     * proving ownership or authenticity of data mathematically
 
@@ -321,7 +321,7 @@ Here are some popular ones:
 * Get Koven Ether (No real value) on the [faucet](https://faucet.kovan.network/)
 
 
-* Download a stable `Geth & Tools` Release on this [site](https://geth.ethereum.org/downloads/) and save on local drive
+* Download a stable `Geth & Tools` Release on this [site](https://geth.ethereum.org/downloads/) and save in a folder called `Blockchain_Tools` on local drive
 
 * On Gitbash, `cd` to the folder location. Then type the followings to create a Genesis Block
 
@@ -342,13 +342,14 @@ Here are some popular ones:
 # Enter 1 to choose proof of work
 
 #6
-# Enter your public key for your Koven Ether wallet
+# Enter your public address from your Koven Ether wallet 
+# (just so we have an address that we can access with a known private key)
 
 #7
 # Press Enter to skip to chain/network ID
 
 #8
-# Enter a number that you can remember
+# Enter a number/chain ID that you can remember
 ```
 
 <br>
@@ -356,7 +357,7 @@ Here are some popular ones:
 Then type the followings to create 2 nodes
 
 ```
-#1
+#1 (skip if you are still in puppeth console)
 ./puppeth
 
 #2
@@ -375,6 +376,7 @@ Then type the followings to create 2 nodes
 #6
 # Make sure you are in the Blockchain_Tools directory
 # Create the first node's data directory
+
 ./geth account new --datadir node1
 
 #7
@@ -386,14 +388,16 @@ Then type the followings to create 2 nodes
 #9
 # Create the second node's data directory
 # You typically would only have one node per machine
-# but you need to create at least two nodes in your computer
-# to create a blockchain
+# but you need to create at least two nodes in your computer to create a blockchain
 
 ./geth account new --datadir node2
 
-
 #10
+# Enter a password for node2
+
+#11
 # Initialize and tell the nodes to use the genesis block
+
 ./geth init puppernet.json --datadir node1
 ./geth init puppernet.json --datadir node2
 
@@ -402,10 +406,10 @@ Then type the followings to create 2 nodes
 <br>
 
 
-Then type the followings to start the Blockchain
+Then type the followings to start the Blockchain network
 
 ```
-#1
+#1 (skip if you are already in Blockchain_Tools)
 # cd to the Blockchain_Tools dir
 
 #2
@@ -414,8 +418,8 @@ Then type the followings to start the Blockchain
 # that is not the localhost (127.0.0.1), you may add the
 # --rpcaddr 127.0.0.1 flag in order to force it to do so
 
-# The --mine flag tells the node to mine new blocks
-# The --minerthreads flag tells geth how many CPU threads
+# --mine flag tells the node to mine new blocks
+# --minerthreads flag tells geth how many CPU threads
 # or "workers" to use during mining
 # 1 means the difficulty is low
 
@@ -437,6 +441,7 @@ Then type the followings to start the Blockchain
 # Enable RPC
 # Change the default port
 # Pass the enodeid of the first node you copied in quotes
+
 # --rpc flag enables us to talk to our node, allowing us to use MyCrypto to transact on our chain
 # --port flag enables us to change the port to 30304 which is different from the first node
 # --bootnodes flag allows us to pass the network info to connect to other nodes in the blockchain
@@ -444,12 +449,12 @@ Then type the followings to start the Blockchain
 
 # OS
 
-./geth --datadir node2 --port 30304 --rpc --bootnodes "enode://CopyFromFirstNode"
+./geth --datadir node2 --port 30304 --rpc --bootnodes "enode://<Enode from Node1>"
 
 
 # Windows
 
-./geth --datadir node2 --port 30304 --rpc --bootnodes "enode://CopyFromFirstNode" --ipcdisable
+./geth --datadir node2 --port 30304 --rpc --bootnodes "enode://<Enode from Node1>" --ipcdisable
 
 ```
 
@@ -462,4 +467,127 @@ Then type the followings to start the Blockchain
 rm -Rf node1/geth node2/geth
 ```
 
-* The enodeid is the only aspect that will change
+* The enode id is the only aspect that will change
+
+
+<br>
+
+Another way to start the Blockchain network with `unlock` flag
+```
+# On one Gitbash
+
+./geth --datadir node1 --unlock "<Address from Node1 Keystore>" --mine --rpc --allow-insecure-unlock
+
+
+# On another Gitbash
+
+./geth --datadir node2 --unlock "<Address from Node2 Keystore>" --mine --port 30304 --bootnodes enode://<Enode from Node1> --ipcdisable
+
+```
+
+
+<br>
+
+*Connect to MyCrypto (Optional)*
+
+1. Change Network
+2. Add Custom Node
+3. In the `Netowrk` dropdown, scroll all the way to the bottom to select `Custom`
+4. Enter the information and click `Save` (URL is `http://127.0.0.1:8545`)
+5. Sign into the private Network with your private key that is associated to the prefunded account
+
+
+
+
+<br>
+<br>
+
+
+# Making Transactions via Python Web3
+
+```
+import os
+from web3 import Web3
+from dotenv import load_dotenv
+# from web3.middleware import geth_poa_middleware
+from eth_account import Account
+
+from pathlib import Path
+from getpass import getpass
+
+load_dotenv()
+
+w3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8545"))
+
+# For Proof of Authority only
+# w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+
+# Check block number
+print(w3.eth.blockNumber)
+
+# Get private key
+private_key = os.getenv("PRIVATE_KEY")
+
+# Create account one object from env variable
+account_one = Account.from_key(private_key)
+
+# Create account two object from keystore file
+with open(Path("UTC--2020-07-24T22-21-30.645Z--b42562bc046f18f31ecf0a0126557bef3676d7e8")) as keyfile:
+    encrypted_key = keyfile.read()
+    private_key = w3.eth.account.decrypt(
+        encrypted_key, getpass("Enter keystore password: ")
+    )
+    account_two = Account.from_key(private_key)
+
+    
+# Define a function to create new unsigned transactions
+# We can use this to request a transaction, filling in all of the necessary parameters
+# then all the user has to do is sign it
+
+def create_raw_tx(account, recipient, amount):
+    gasEstimate = w3.eth.estimateGas(
+        {"from": account.address, "to": recipient, "value": amount}
+    )
+    return {
+        "from": account.address,
+        "to": recipient,
+        "value": amount,
+        "gasPrice": w3.eth.gasPrice,
+        "gas": gasEstimate,
+        "nonce": w3.eth.getTransactionCount(account.address),
+    }
+
+
+# Define a function to sign and send fund from one to another account
+# The account parameter is an object
+# The recipient parameter is an address from the object
+
+def send_tx(account, recipient, amount):
+    tx = create_raw_tx(account, recipient, amount)
+    signed_tx = account.sign_transaction(tx)
+    result = w3.eth.sendRawTransaction(signed_tx.rawTransaction)
+    print(result.hex())
+    return result.hex()
+
+receipt = send_tx(account_one, account_two.address, 555555555555555)
+
+
+# Check transaction receipt
+w3.eth.getTransactionReceipt(receipt)
+
+
+# Check account balance
+w3.eth.getBalance(account_one.address)
+
+
+# Convert the hash to the correct format
+Web3.toChecksumAddress("0xb42562bC046f18f31ECF0a0126557bef3676d7E8")
+
+# Output: '0xb42562bC046f18f31ECF0a0126557bef3676D7e8'
+
+```
+
+
+<br>
+<br>
+
