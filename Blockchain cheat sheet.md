@@ -137,6 +137,14 @@ A blockchain is a distributed "immutable" database that is not controlled by a s
 
 * `Data security`: Ensure the data stays secret
 
+
+* `Private key`: A key that allows you to sign transactions
+
+* `Derivation path`: The path along the tree that the key is created from, starting at the master key
+
+
+
+
 <br>
 <br>
 
@@ -696,6 +704,155 @@ key.get_unspents()
 * If you were to spend the same UTXOs in both transactions, the first one to be mined would succeed, and the second would be invalidated.
 
 <br>
+<br>
 
 
 
+# BIP (Bitcoin Improvement Proposal)
+
+
+## Wallet
+
+* A piece of software that manages your private keys and allows you to sign and send transactions
+
+* "Hot" wallets tend to be live and ready to spend funds, and much easier to access.
+
+* "Cold" wallets tend to store larger funds and are accessed less frequently, more like a vault.
+
+* It divides into 2 parts:
+
+1. `Key Manager`: Code that takes your mnemonic or private key and converts it to the proper blockchain address format (This is the low-level cryptographic library)
+
+2. `Blockchain Node Connectors`: Code that connects to the live blockchain nodes that the wallet supports
+
+
+<br>
+
+## BIP39 Standard
+
+* allows us to convert mnemonics to master keys
+
+* Bitcoin Improvement Proposal
+
+* Helps the alt coins network in addition to Bitcoin
+
+* Allows people to remember a more human-friendly version of the key
+
+* Comes up with the exact lists of 2048 words per language (English, Japanese, etc)
+
+* Comes up with a formula that allows you to take a set of those words and generate private keys with them
+
+
+
+BIP39 Seed is the "master seed" or "master key" that can be used to derive any of the rest of the keys information
+
+
+<br>
+
+## BIP32 Standard
+
+* Allows us to generate a tree of keys from the master key/seed
+
+* Allows us to generate many addresses from a single seed, without having to create new wallets constantly and having to track their private keys
+
+
+* Allows us to generate a new address for the UTOXs in every transaction so we can spend them all simultaneously
+
+* Allows easier accounting on the blockchain because each address represents a receipt
+
+* Since there will be different addresses, people can't see our entire balance and transaction history
+
+* Generating new addresses helps preserve privacy (Bitcoin is pseudonymous, not anonymous)
+
+<br>
+
+## BIP44 standard
+
+* Allows us to use the same master key/seed for multiple coins/blockchains
+
+* Still supports multiple addresses like BIP32
+
+* Allows the rest of the crypto and blockchain community to be more interoperable
+
+* The most universal wallet as of 2020
+
+* This is also the standard that exchanges use to generate our crypto addresses and keep track of customer's balances and transactions
+
+* All blockchains have an incentive to integrate with this universal standard
+
+* We can manage keys from many blockchains using a single master seed
+
+
+<br>
+<br>
+
+## Get master key and info via GUI
+* Convert BIP39 Mnemonic phrase to addresses [here](https://iancoleman.io/bip39/)
+
+
+<br>
+<br>
+
+
+## Get master key and info  via command line
+
+1) Install php from [XAMPP](https://www.apachefriends.org/index.html)
+
+2) Add `extension=php_gmp.dll` to the last line of `php.ini`
+
+3) Add `C:\xampp\php` to system environment variable `PATH`
+
+4) Navigate to [here](https://github.com/dan-da/hd-wallet-derive) and install `hd-wallet-derive`
+
+    * Open bash.exe from `C:\Program Files\Git\bin\bash.exe`
+
+    * In Bash, cd into the `hd-wallet-derive` folder
+
+    ```
+    git clone https://github.com/dan-da/hd-wallet-derive
+    cd hd-wallet-derive
+    php -r "readfile('https://getcomposer.org/installer');" | php
+    php -d pcre.jit=0 composer.phar install
+    ```
+
+<br>
+
+
+
+5. Open Gitbash as admin and run commands below
+    ```
+    ln -s hd-wallet-derive/hd-wallet-derive.php derive
+
+    php derive -g --mnemonic="INSERT HERE" --cols=path,address,privkey,pubkey --format=json
+    ```
+
+
+<br>
+
+6. Run commands below to import addresses using Python
+    ```
+    import subprocess
+    import json
+
+
+    # Windows
+    command = 'php derive -g --mnemonic="INSERT HERE" --cols=path,address,privkey,pubkey --format=json'
+
+    # Others
+    command = './derive -g --mnemonic="INSERT HERE" --cols=path,address,privkey,pubkey --format=json'
+
+    p = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+    (output, err) = p.communicate()
+    p_status = p.wait()
+
+    keys = json.loads(output)
+
+    print(keys)
+    print(keys[0]['address'])
+    ```
+
+    * -g flag tells the tool to go and run (required)
+
+    * --mnemonic flag tells the tool which mnemonic to derive from
+
+    * --cols flag tells the tool to print certain columns
