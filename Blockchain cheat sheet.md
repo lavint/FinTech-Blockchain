@@ -815,28 +815,70 @@ BIP39 Seed is the "master seed" or "master key" that can be used to derive any o
     php -d pcre.jit=0 composer.phar install
     ```
 
+
+    * **Use CMD if Bash doesn't work**
+    * **Make sure you have the lines below as your system PATH environment variables**
+
+        ```
+        C:\xampp\php
+        C:\Program Files\Git\bin\
+        C:\Program Files\Git\cmd\
+        ```
+
+    Check out this [site](https://github.com/dan-da/hd-wallet-derive) for more info on HD Wallet
+
+
 <br>
 
 
+5. For Windows Users, `cd` to the parent directory of `hd-wallet-derive` and do below because symlink is not supported by default
 
-5. Open Gitbash as admin and run commands below
+    ```
+    # Open up Git-Bash as an administrator 
+    export MSYS=winsymlinks:nativestrict
+    ```
+
+
+<br>
+
+
+6. Make sure you are in the parent directory of `hd-wallet-derive` and run commands below to create symlink
     ```
     ln -s hd-wallet-derive/hd-wallet-derive.php derive
-
-    php derive -g --mnemonic="INSERT HERE" --cols=path,address,privkey,pubkey --format=json
     ```
 
+
+<br>
+
+
+7. Print keys in terminal
+
+    ```
+    ./derive -g --mnemonic="INSERT HERE" --cols=path,address,privkey,pubkey
+    ```
+
+    Convert to json format
+    ```
+    ./derive -g --mnemonic="INSERT HERE" --cols=path,address,privkey,pubkey --format=json
+    ```
+
+ 
+    * -g flag tells the tool to go and run (required)
+
+    * --mnemonic flag tells the tool which mnemonic to derive from
+
+    * --cols flag tells the tool to print certain columns
+
+    
 
 <br>
 
 6. Run commands below to import addresses using Python
     ```
     import subprocess
-    import json
-
 
     # Windows
-    command = 'php derive -g --mnemonic="INSERT HERE" --cols=path,address,privkey,pubkey --format=json'
+    command = 'php ..\..\derive -g --mnemonic="INSERT HERE" --cols=path,address,privkey,pubkey --format=json'
 
     # Others
     command = './derive -g --mnemonic="INSERT HERE" --cols=path,address,privkey,pubkey --format=json'
@@ -845,14 +887,22 @@ BIP39 Seed is the "master seed" or "master key" that can be used to derive any o
     (output, err) = p.communicate()
     p_status = p.wait()
 
+    print(output)
+
+    ```
+
+    Output to JSON instead of bit
+    
+    ```   
+    import json
     keys = json.loads(output)
 
     print(keys)
     print(keys[0]['address'])
     ```
 
-    * -g flag tells the tool to go and run (required)
 
-    * --mnemonic flag tells the tool which mnemonic to derive from
 
-    * --cols flag tells the tool to print certain columns
+    * The `subprocess` module allows us to call other processes, such as CLI tools, from within Python
+
+    * For Windows, instead of calling ./derive, we need to use the "dot-slash" format and call php manually
