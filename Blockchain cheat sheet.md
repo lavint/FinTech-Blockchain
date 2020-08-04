@@ -796,6 +796,8 @@ BIP39 Seed is the "master seed" or "master key" that can be used to derive any o
 
 ## Get master key and info  via command line
 
+*SETTING UP HD WALLET DERIVE*
+
 1) Install php from [XAMPP](https://www.apachefriends.org/index.html)
 
 2) Add `extension=php_gmp.dll` to the last line of `php.ini`
@@ -844,6 +846,7 @@ BIP39 Seed is the "master seed" or "master key" that can be used to derive any o
 
 6. Make sure you are in the parent directory of `hd-wallet-derive` and run commands below to create symlink
     ```
+    # Open up Git-Bash as an administrator 
     ln -s hd-wallet-derive/hd-wallet-derive.php derive
     ```
 
