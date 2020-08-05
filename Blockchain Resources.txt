@@ -1,3 +1,5 @@
+Blockchain 101:
+
 https://academy.binance.com/security/what-is-a-51-percent-attack
 http://adilmoujahid.com/posts/2018/03/intro-blockchain-bitcoin-python/
 https://medium.com/coinmonks/building-a-simple-blockchain-data-structure-with-python-e7ebd448647a
@@ -7,3 +9,11 @@ https://101blockchains.com/wp-content/uploads/2018/12/Blockchian_Cheat_Sheet_pdf
 https://intellipaat.com/blog/tutorial/blockchain-tutorial/ethereum-cheat-sheet/
 https://www.dappuniversity.com/articles/web3-py-intro
 https://medium.com/validitylabs/how-to-interact-with-the-ethereum-blockchain-and-create-a-database-with-python-and-sql-3dcbd579b3c0
+
+
+Solidity:
+
+http://remix.ethereum.org/
+https://cryptozombies.io/
+https://codeburst.io/build-your-first-ethereum-smart-contract-with-solidity-tutorial-94171d6b1c4b
+https://intellipaat.com/mediaFiles/2019/03/Solidity-Cheat-Sheet.jpg
