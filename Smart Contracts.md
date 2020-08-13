@@ -55,9 +55,21 @@
 
     * On deployment, set environment to Injected Web3 so that Remix can talk to MetaMask, which injects Web3 library to the browser and allows Remix to talk to the blockchain networks
 
+<br>
 
 * `Ethereum Virtual Machine(EVM)` is a sandboxed environment backed by a virtual stack and capable of performing calculations
     * Embedded within every Ethereum full node on the Ethereum network
+
+<br>
+
+
+* `Fungibility`: The ability of a good or asset to be interchanged with other individual goods or assets of the same type
+
+    * Fungible goods: cryptocurrencies, fiat currencies, or voting rights
+
+    * Non-fungible goods: pieces of land, diamonds, or collectibles
+
+
 
 <br>
 
@@ -422,25 +434,25 @@ contract JointSavings {
 
 * Are programmed using smart contracts so they can be programmed to do many things besides just payments
 
+* Have a supply which can be a fixed or infinite amount
+
+* Represent any store of value including, votes, currency, and property
 
 * Can be traded globally without any additional infrastructure because they are blockchain-powered
 
-
 * By tokenizing things, you can make representing and trading value very easy and efficient
-
 
 * You can open up your crypto wallet to see all the various assets you own in a single place, digital and physical
 
-
-* Business assets can easily be tracked and transferred, dramatically improving liquidity and auditability
-
+* Business assets can easily be tracked and transferred, improving liquidity and auditability
 
 * Items you purchase at a grocery store can be tokenized, allowing you to scan a code on your groceries to pull up the entire supply chain history of the items, so you know exactly where they came from
-
 
 * Stablecoins are tokens designed to have stable value; unlike traditional cryptocurrencies, they are not as volatile since they are backed by fiat (government) currencies
 
 * Stablecoins normally hold USD within bank accounts and then issue tokens backed by these dollars
+
+* Open, public, borderless, censorship-resistant, and neutral
 
 
 <br>
@@ -592,3 +604,116 @@ contract ArcadeToken {
     }
 }
 ```
+
+
+<br>
+<br>
+
+## Ethereum Improvement Proposals (EIP)
+
+The **best practices** within the platform to prevent bugs and security vulnerabilities - You should always follow the standards and practices on the [EIP](https://eips.ethereum.org/) site
+
+
+* Provides a way to submit new standards within the community
+
+* Allows the community to agree on a current standard for a feature
+
+* Helps prevent bugs and security vulnerabilities by creating a specification for implementing certain types of smart contracts
+
+* Community support
+
+* better standards from peer review
+
+* open development
+
+* `OpenZeppelin` library provides security tools and standardized implementations of official ERCs to make developer lives easier
+
+
+
+
+### Categories
+
+* Core
+
+* Networking
+
+* Interface
+
+* ERC
+
+* Meta
+
+* Information
+
+<br>
+
+### ERCs 
+
+Application-level standards and conventions (e.g. smart contracts)
+
+
+* EIP 20 (most common): Fungible Token Standard
+
+* EIP 721: Non-Fungible Token Standard
+
+* EIP 777: Fungible Token Standard
+
+* EIP 1155: Multi-Token Standard
+
+
+<br>
+
+
+Process: [ WIP ] -> [ DRAFT ] -> [ LAST CALL ] -> [ FINAL ]
+
+* `WIP`: During the work in progress phase, EIP creators formulate their EIP and may ask the community forums for input.
+
+* `Draft`: During the draft phase, the initial draft and any changes are merged in as a pull request. The EIP must be implemented to progress to the next phase.
+
+* `Last Call`: During the last call phase, the EIP is listed on the [website](https://eips.ethereum.org/) under the Last call section. If there are no unaddressed technical complaints will or changes to source material required, then the changes will become Final.
+
+* `Final`: The EIP becomes final, reflecting the most state-of-the-art standard.
+
+<br>
+
+
+### Using OpenZeppelin with ERC20
+
+* By indicating `contract ArcadeToken is ERC20, ERC20Detailed`, the ArcadeToken contract inherits all of the variables, functions, etc from ERC20 and ERC20Detailed
+
+* A `modifier` is a special function that will allow us to restrict our other functions in the same way that we set them to public or payable
+
+* At the last line of the `modifier`, you need to add an underscore `_` to tell Solidity to return to the function that called the `modifier`
+
+
+
+```
+pragma solidity ^0.5.0;
+
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v2.5.0/contracts/token/ERC20/ERC20.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v2.5.0/contracts/token/ERC20/ERC20Detailed.sol";
+
+
+//inherit the functions and properties of ERC20 and ERC20Detailed contracts
+
+contract ArcadeToken is ERC20, ERC20Detailed {
+    address payable owner;
+
+    modifier onlyOwner {
+        require(msg.sender == owner, "You do not have permission to mint these tokens!");
+        _;
+    }
+
+    constructor(uint initial_supply) ERC20Detailed("ArcadeToken", "ARCD", 18) public {
+        owner = msg.sender;
+        _mint(owner, initial_supply);
+    }
+
+    function mint(address recipient, uint amount) public onlyOwner {
+        _mint(recipient, amount);
+    }
+}
+```
+
+`MetaMask` is compatible with the ERC20 standard so it can recognize and utilize the virtual tokens you deployed
+
