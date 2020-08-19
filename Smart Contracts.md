@@ -717,3 +717,13 @@ contract ArcadeToken is ERC20, ERC20Detailed {
 
 `MetaMask` is compatible with the ERC20 standard so it can recognize and utilize the virtual tokens you deployed
 
+
+
+<br>
+<br>
+
+## Additional Resources
+
+[OpenZeppelin ERC721](https://docs.openzeppelin.com/contracts/2.x/api/token/erc721)
+
+[IPFS](https://docs.ipfs.io/)
